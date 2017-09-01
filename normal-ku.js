@@ -1,4 +1,4 @@
-	//1、手机移动端rem适配  如果宽度要求750px 则return p>1?1:p<0.5?0.5:p; 改为 return p>1?1:p<0.4?0.4:p;
+	//方案1、手机移动端rem适配  如果宽度要求750px 则return p>1?1:p<0.5?0.5:p; 改为 return p>1?1:p<0.4?0.4:p;
 		new function (){
 		   var _self = this;
 		   _self.width = 640;//设置默认最大宽度
@@ -10,7 +10,24 @@
 		   _self.changePage();
 		   window.addEventListener('resize',function(){_self.changePage();},false);
 		};
-
+//方案2 （推荐）
+function adapt(designWidth, rem2px){
+              var d = window.document.createElement('div');
+              d.style.width = '1rem';
+              d.style.display = "none";
+              var head = window.document.getElementsByTagName('head')[0];
+              head.appendChild(d);
+              var defaultFontSize = parseFloat(window.getComputedStyle(d, null).getPropertyValue('width'));
+              d.remove();
+              document.documentElement.style.fontSize = window.innerWidth / designWidth * rem2px / defaultFontSize * 100 + '%';
+              var st = document.createElement('style');
+              var portrait = "@media screen and (min-width: "+window.innerWidth+"px) {html{font-size:"+((window.innerWidth/(designWidth/rem2px)/defaultFontSize)*100) +"%;}}";
+              var landscape = "@media screen and (min-width: "+window.innerHeight+"px) {html{font-size:"+((window.innerHeight/(designWidth/rem2px)/defaultFontSize)*100) +"%;}}"
+              st.innerHTML = portrait + landscape;
+              head.appendChild(st);
+              return defaultFontSize
+            };
+            var defaultFontSize = adapt(750, 100);
 
 
 	//2、获取class的封装函数
